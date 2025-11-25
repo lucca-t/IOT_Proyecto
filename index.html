@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Monitoreo de Gas - IOT</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Screen 1: Sensor List -->
+    <div id="sensor-list" class="screen active">
+        <nav class="top-nav">
+            <button class="nav-btn" onclick="showScreen('sensor-list')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Usuario
+            </button>
+            <button class="nav-btn nav-btn-empty"></button>
+            <button class="nav-btn active" onclick="showScreen('sensor-list')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Casa
+            </button>
+        </nav>
+
+        <div class="avatar">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+
+        <h1 class="page-title">Sensores - Casa</h1>
+        <p class="page-subtitle">Monitoreo en tiempo real</p>
+
+        <div class="sensor-container">
+            <div class="sensor-card" onclick="showScreen('status-detail', 1)">
+                <div class="sensor-icon safe">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <div class="sensor-info">
+                    <h3 class="sensor-name">Sensor 1</h3>
+                    <p class="sensor-location">Cocina</p>
+                </div>
+                <div class="sensor-status safe">
+                    <span class="status-dot"></span>
+                    <span class="status-label">Sin riesgo</span>
+                </div>
+                <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </div>
+
+            <div class="sensor-card" onclick="showScreen('status-detail', 2)">
+                <div class="sensor-icon safe">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <div class="sensor-info">
+                    <h3 class="sensor-name">Sensor 2</h3>
+                    <p class="sensor-location">Sala</p>
+                </div>
+                <div class="sensor-status safe">
+                    <span class="status-dot"></span>
+                    <span class="status-label">Sin riesgo</span>
+                </div>
+                <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </div>
+
+            <div class="sensor-card" onclick="showScreen('status-detail', 3)">
+                <div class="sensor-icon safe">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <div class="sensor-info">
+                    <h3 class="sensor-name">Sensor 3</h3>
+                    <p class="sensor-location">Garaje</p>
+                </div>
+                <div class="sensor-status safe">
+                    <span class="status-dot"></span>
+                    <span class="status-label">Sin riesgo</span>
+                </div>
+                <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </div>
+        </div>
+
+        <button class="btn-test-alert" onclick="showScreen('alert-screen')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Simular Alerta
+        </button>
+    </div>
+
+    <!-- Screen 2: Status Detail -->
+    <div id="status-detail" class="screen">
+        <nav class="top-nav">
+            <button class="nav-btn" onclick="showScreen('sensor-list')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Usuario
+            </button>
+            <button class="nav-btn nav-btn-empty"></button>
+            <button class="nav-btn active" onclick="showScreen('sensor-list')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Casa
+            </button>
+        </nav>
+
+        <button class="back-btn" onclick="showScreen('sensor-list')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Volver
+        </button>
+
+        <div class="avatar">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+
+        <h1 class="page-title">Estado del Sensor</h1>
+        <p class="page-subtitle">Casa - Cocina</p>
+
+        <div class="status-content">
+            <div class="status-card">
+                <div class="status-gauge">
+                    <svg class="gauge-svg" viewBox="0 0 200 120">
+                        <path class="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100" stroke="#E5E7EB" stroke-width="20" fill="none"/>
+                        <path class="gauge-fill" d="M 20 100 A 80 80 0 0 1 180 100" stroke="#10B981" stroke-width="20" fill="none" stroke-dasharray="251.2" stroke-dashoffset="125.6"/>
+                    </svg>
+                    <div class="gauge-value">
+                        <span class="gauge-number" id="gas-value">20</span>
+                        <span class="gauge-unit">ppm</span>
+                    </div>
+                </div>
+                
+                <div class="status-info-grid">
+                    <div class="info-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <div>
+                            <p class="info-label">Última lectura</p>
+                            <p class="info-value" id="last-reading-time">08/08/2025 12:00 pm</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                        <div>
+                            <p class="info-label">Estado</p>
+                            <p class="info-value status-safe">Sin riesgo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="showScreen('sensor-history')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <polyline points="19 12 12 19 5 12"></polyline>
+                </svg>
+                Ver historial completo
+            </button>
+        </div>
+    </div>
+
+    <!-- Screen 3: Sensor History -->
+    <div id="sensor-history" class="screen">
+        <nav class="top-nav">
+            <button class="nav-btn" onclick="showScreen('sensor-list')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Usuario
+            </button>
+            <button class="nav-btn nav-btn-empty"></button>
+            <button class="nav-btn active" onclick="showScreen('sensor-list')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Casa
+            </button>
+        </nav>
+
+        <button class="back-btn" onclick="showScreen('status-detail')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Volver
+        </button>
+
+        <div class="avatar">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+
+        <h1 class="page-title">Historial - Sensor <span id="sensor-num">1</span></h1>
+        <p class="page-subtitle">Últimas lecturas registradas</p>
+
+        <div class="history-chart">
+            <svg class="chart-svg" viewBox="0 0 800 350">
+                <defs>
+                    <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:0" />
+                    </linearGradient>
+                </defs>
+                
+                <!-- Y-axis labels -->
+                <text x="20" y="50" font-size="12" fill="#6B7280">50</text>
+                <text x="20" y="100" font-size="12" fill="#6B7280">40</text>
+                <text x="20" y="150" font-size="12" fill="#6B7280">30</text>
+                <text x="20" y="200" font-size="12" fill="#6B7280">20</text>
+                <text x="20" y="250" font-size="12" fill="#6B7280">10</text>
+                <text x="20" y="300" font-size="12" fill="#6B7280">0</text>
+                
+                <!-- Y-axis label -->
+                <text x="15" y="20" font-size="14" font-weight="600" fill="#374151">PPM</text>
+                
+                <!-- X-axis labels -->
+                <text x="70" y="330" font-size="12" fill="#6B7280">9:30</text>
+                <text x="170" y="330" font-size="12" fill="#6B7280">9:40</text>
+                <text x="270" y="330" font-size="12" fill="#6B7280">9:50</text>
+                <text x="370" y="330" font-size="12" fill="#6B7280">10:00</text>
+                <text x="470" y="330" font-size="12" fill="#6B7280">10:10</text>
+                <text x="570" y="330" font-size="12" fill="#6B7280">10:20</text>
+                <text x="670" y="330" font-size="12" fill="#6B7280">10:30</text>
+                
+                <!-- X-axis label -->
+                <text x="360" y="350" font-size="14" font-weight="600" fill="#374151">Tiempo</text>
+                
+                <!-- Grid lines -->
+                <line x1="50" y1="50" x2="750" y2="50" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="50" y1="100" x2="750" y2="100" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="50" y1="150" x2="750" y2="150" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="50" y1="200" x2="750" y2="200" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="50" y1="250" x2="750" y2="250" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+                <line x1="50" y1="300" x2="750" y2="300" stroke="#E5E7EB" stroke-width="1"/>
+                
+                <!-- Data line (realistic PPM values: 15-25 range) -->
+                <path d="M 50 240 L 150 230 L 250 245 L 350 235 L 450 250 L 550 242 L 650 248 L 750 238" 
+                      stroke="#3B82F6" stroke-width="3" fill="none"/>
+                <path d="M 50 240 L 150 230 L 250 245 L 350 235 L 450 250 L 550 242 L 650 248 L 750 238 L 750 300 L 50 300 Z" 
+                      fill="url(#chartGradient)"/>
+                      
+                <!-- Data points -->
+                <circle cx="50" cy="240" r="4" fill="#3B82F6"/>
+                <circle cx="150" cy="230" r="4" fill="#3B82F6"/>
+                <circle cx="250" cy="245" r="4" fill="#3B82F6"/>
+                <circle cx="350" cy="235" r="4" fill="#3B82F6"/>
+                <circle cx="450" cy="250" r="4" fill="#3B82F6"/>
+                <circle cx="550" cy="242" r="4" fill="#3B82F6"/>
+                <circle cx="650" cy="248" r="4" fill="#3B82F6"/>
+                <circle cx="750" cy="238" r="6" fill="#3B82F6"/>
+            </svg>
+        </div>
+
+        <div class="readings-list">
+            <h3 class="readings-title">Lecturas recientes</h3>
+            <div class="reading-card">
+                <div class="reading-time">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    10:30 AM
+                </div>
+                <div class="reading-value">22 ppm</div>
+                <div class="reading-status safe">Sin riesgo</div>
+            </div>
+            <div class="reading-card">
+                <div class="reading-time">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    10:20 AM
+                </div>
+                <div class="reading-value">18 ppm</div>
+                <div class="reading-status safe">Sin riesgo</div>
+            </div>
+            <div class="reading-card">
+                <div class="reading-time">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    10:10 AM
+                </div>
+                <div class="reading-value">20 ppm</div>
+                <div class="reading-status safe">Sin riesgo</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: Alert -->
+    <div id="alert-screen" class="screen">
+        <div class="alert-content">
+            <div class="alert-pulse">
+                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            
+            <h1 class="alert-title">¡ALERTA!</h1>
+            <h2 class="alert-subtitle">Nivel crítico de gas detectado</h2>
+            
+            <div class="alert-details">
+                <div class="alert-detail-item">
+                    <span class="alert-label">Nivel actual:</span>
+                    <span class="alert-value danger">55 ppm</span>
+                </div>
+                <div class="alert-detail-item">
+                    <span class="alert-label">Ubicación:</span>
+                    <span class="alert-value">Cocina - Sensor 1</span>
+                </div>
+                <div class="alert-detail-item">
+                    <span class="alert-label">Hora:</span>
+                    <span class="alert-value" id="alert-time">Ahora</span>
+                </div>
+            </div>
+
+            <div class="alert-actions">
+                <button class="btn-danger" onclick="markAttended()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Marcar como atendido
+                </button>
+                <button class="btn-outline" onclick="showScreen('status-detail')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Ver detalles
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
