@@ -159,6 +159,14 @@ body {
     margin-bottom: 48px;
 }
 
+.page-subtitle-name {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin: 8px 0 4px;
+}
+
 /* Sensor Cards */
 .sensor-container {
     max-width: 600px;

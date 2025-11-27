@@ -10,9 +10,36 @@ function showScreen(screenId, sensorNum = null) {
         targetScreen.classList.add('active');
     }
 
-    // Update sensor number if provided
-    if (sensorNum && document.getElementById('sensor-num')) {
-        document.getElementById('sensor-num').textContent = sensorNum;
+    // Update sensor number and name if provided
+    if (sensorNum) {
+        const ws = window.sensorWebSocket?.getInstance();
+        const sensorIndex = parseInt(sensorNum) - 1;
+        const sensorInfo = ws?.getSensorInfo(sensorIndex);
+        
+        // Update status detail screen
+        const statusSensorNameTitle = document.getElementById('status-sensor-name-title');
+        const statusSensorName = document.getElementById('status-sensor-name');
+        if (statusSensorNameTitle && sensorInfo) {
+            statusSensorNameTitle.textContent = sensorInfo.name;
+        }
+        if (statusSensorName && sensorInfo) {
+            statusSensorName.textContent = sensorInfo.uuid || '';
+        }
+        
+        // Update history screen
+        const historySensorNameTitle = document.getElementById('history-sensor-name-title');
+        const historySensorName = document.getElementById('history-sensor-name');
+        if (historySensorNameTitle && sensorInfo) {
+            historySensorNameTitle.textContent = sensorInfo.name;
+        }
+        if (historySensorName && sensorInfo) {
+            historySensorName.textContent = sensorInfo.uuid || '';
+        }
+        
+        // Load history data for this sensor
+        if (screenId === 'sensor-history') {
+            updateHistoryChart();
+        }
     }
 }
 
@@ -139,8 +166,81 @@ function animateValue(element, start, end, duration) {
     }, 16);
 }
 
+// Generate sensor cards dynamically based on config
+function generateSensorCards() {
+    const container = document.getElementById('sensor-container');
+    if (!container) return;
+    
+    container.innerHTML = ''; // Clear existing cards
+    
+    const ws = window.sensorWebSocket?.getInstance();
+    if (!ws) {
+        console.log('⚠️ WebSocket not initialized yet');
+        return;
+    }
+    
+    const sensors = ws.getAllSensors();
+    
+    sensors.forEach((sensor) => {
+        const sensorNum = sensor.index + 1;
+        
+        const card = document.createElement('div');
+        card.className = 'sensor-card';
+        card.setAttribute('data-sensor-index', sensor.index);
+        card.onclick = () => showScreen('status-detail', sensorNum);
+        
+        card.innerHTML = `
+            <div class="sensor-icon safe">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+            </div>
+            <div class="sensor-info">
+                <h3 class="sensor-name">${sensor.name}</h3>
+                <p class="sensor-location">${sensor.uuid}</p>
+            </div>
+            <div class="sensor-status safe">
+                <span class="status-dot"></span>
+                <span class="status-label">Sin riesgo</span>
+            </div>
+            <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        `;
+        
+        container.appendChild(card);
+    });
+    
+    console.log(`✅ Generated ${container.children.length} sensor cards`);
+}
+
+// Update sensor card info dynamically when new data arrives
+function updateSensorCardInfo(sensorIndex) {
+    const ws = window.sensorWebSocket?.getInstance();
+    if (!ws) return;
+    
+    const sensorInfo = ws.getSensorInfo(sensorIndex);
+    const card = document.querySelector(`.sensor-card[data-sensor-index="${sensorIndex}"]`);
+    
+    if (card) {
+        const nameElement = card.querySelector('.sensor-name');
+        const locationElement = card.querySelector('.sensor-location');
+        
+        if (nameElement && sensorInfo.name) {
+            nameElement.textContent = sensorInfo.name;
+        }
+        if (locationElement && sensorInfo.location) {
+            locationElement.textContent = sensorInfo.location;
+        }
+    }
+}
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', function() {
+    // Don't generate cards yet - wait for sensor data
+    // generateSensorCards() will be called after fetchAllSensors()
+    
     // Add CSS animations
     const style = document.createElement('style');
     style.textContent = `
@@ -170,7 +270,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show sensor list by default
     showScreen('sensor-list');
 
-    // Update gas levels every 10 seconds (for demo purposes)
+    // Initialize WebSocket connection for real-time data
+    if (window.sensorWebSocket) {
+        console.log('🔌 Initializing WebSocket connection...');
+        window.sensorWebSocket.init();
+    }
+
+    // Fallback: Update gas levels every 10 seconds if WebSocket not available
+    // This will be overridden by real WebSocket data
     setInterval(updateGasLevel, 10000);
 
     // Update last reading time every minute
@@ -203,6 +310,180 @@ function goToStatusDetail() {
 
 function goHome() {
     showScreen('sensor-list');
+}
+
+// Update history chart with real data
+function updateHistoryChart() {
+    const sensorNum = document.getElementById('sensor-num')?.textContent || '1';
+    
+    // Get the sensor index (0-based) from sensor number (1-based)
+    const sensorIndex = parseInt(sensorNum) - 1;
+    
+    if (!window.sensorWebSocket) return;
+    
+    const ws = window.sensorWebSocket.getInstance();
+    if (!ws) return;
+    
+    const history = ws.getHistory(sensorIndex);
+    
+    if (history && history.length > 0) {
+        console.log(`📈 Updating chart for Sensor ${sensorNum} with ${history.length} data points`);
+        
+        // Update the SVG chart with actual data
+        updateChartSVG(history);
+        
+        // Update the reading cards with latest 3 readings
+        const readingCards = document.querySelectorAll('.reading-card');
+        const latestReadings = history.slice(-3).reverse();
+        
+        latestReadings.forEach((reading, index) => {
+            if (readingCards[index]) {
+                const valueElement = readingCards[index].querySelector('.reading-value');
+                const timeElement = readingCards[index].querySelector('.reading-time');
+                const statusElement = readingCards[index].querySelector('.reading-status');
+                
+                if (valueElement) {
+                    valueElement.textContent = `${Math.round(reading.value)} ppm`;
+                }
+                
+                if (timeElement) {
+                    const date = new Date(reading.timestamp * 1000);
+                    const timeText = date.toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    timeElement.querySelector('svg').nextSibling.textContent = ' ' + timeText;
+                }
+                
+                if (statusElement) {
+                    if (reading.value >= THRESHOLDS.danger) {
+                        statusElement.textContent = 'Peligro';
+                        statusElement.className = 'reading-status danger';
+                    } else if (reading.value >= THRESHOLDS.warning) {
+                        statusElement.textContent = 'Advertencia';
+                        statusElement.className = 'reading-status warning';
+                    } else {
+                        statusElement.textContent = 'Sin riesgo';
+                        statusElement.className = 'reading-status safe';
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Update the SVG chart with actual sensor data
+function updateChartSVG(history) {
+    const chartSvg = document.querySelector('.chart-svg');
+    if (!chartSvg) return;
+    
+    // Chart dimensions
+    const width = 700; // 750 - 50 for left margin
+    const height = 250; // 300 - 50 for top/bottom margins
+    const startX = 50;
+    const startY = 50;
+    const maxY = startY + height;
+    
+    // Get max PPM value for scaling (with minimum of 50 for scale)
+    const maxPPM = Math.max(50, ...history.map(r => r.value), 50);
+    const minPPM = 0;
+    
+    // Take last 10 readings for the chart
+    const dataPoints = history.slice(-10);
+    const numPoints = dataPoints.length;
+    
+    if (numPoints === 0) return;
+    
+    // Calculate X spacing
+    const xSpacing = width / Math.max(numPoints - 1, 1);
+    
+    // Generate path data
+    let pathData = '';
+    let fillPathData = '';
+    let circles = '';
+    let xLabels = '';
+    
+    dataPoints.forEach((reading, index) => {
+        const x = startX + (index * xSpacing);
+        const ppm = reading.value;
+        
+        // Scale Y (invert because SVG Y increases downward)
+        const y = maxY - ((ppm - minPPM) / (maxPPM - minPPM)) * height;
+        
+        // Build path
+        if (index === 0) {
+            pathData += `M ${x} ${y}`;
+            fillPathData += `M ${x} ${y}`;
+        } else {
+            pathData += ` L ${x} ${y}`;
+            fillPathData += ` L ${x} ${y}`;
+        }
+        
+        // Add circle for data point
+        circles += `<circle cx="${x}" cy="${y}" r="4" fill="#3B82F6"/>`;
+        
+        // Add X-axis label (time)
+        const date = new Date(reading.timestamp * 1000);
+        const timeLabel = date.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Only show labels for some points to avoid crowding
+        if (numPoints <= 5 || index % Math.ceil(numPoints / 5) === 0 || index === numPoints - 1) {
+            xLabels += `<text x="${x - 15}" y="330" font-size="12" fill="#6B7280">${timeLabel}</text>`;
+        }
+    });
+    
+    // Close the fill path
+    const lastX = startX + ((numPoints - 1) * xSpacing);
+    fillPathData += ` L ${lastX} ${maxY} L ${startX} ${maxY} Z`;
+    
+    // Update Y-axis labels based on max value
+    const yStep = maxPPM / 5;
+    let yLabels = '';
+    for (let i = 0; i <= 5; i++) {
+        const value = Math.round(maxPPM - (i * yStep));
+        const y = startY + (i * (height / 5));
+        yLabels += `<text x="20" y="${y + 5}" font-size="12" fill="#6B7280">${value}</text>`;
+    }
+    
+    // Rebuild the SVG content
+    chartSvg.innerHTML = `
+        <defs>
+            <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:0" />
+            </linearGradient>
+        </defs>
+        
+        <!-- Y-axis labels -->
+        ${yLabels}
+        
+        <!-- Y-axis label -->
+        <text x="15" y="20" font-size="14" font-weight="600" fill="#374151">PPM</text>
+        
+        <!-- X-axis labels -->
+        ${xLabels}
+        
+        <!-- X-axis label -->
+        <text x="360" y="350" font-size="14" font-weight="600" fill="#374151">Tiempo</text>
+        
+        <!-- Grid lines -->
+        <line x1="50" y1="50" x2="750" y2="50" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="50" y1="100" x2="750" y2="100" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="50" y1="150" x2="750" y2="150" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="50" y1="200" x2="750" y2="200" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="50" y1="250" x2="750" y2="250" stroke="#E5E7EB" stroke-width="1" stroke-dasharray="4"/>
+        <line x1="50" y1="300" x2="750" y2="300" stroke="#E5E7EB" stroke-width="1"/>
+        
+        <!-- Data line -->
+        <path d="${pathData}" stroke="#3B82F6" stroke-width="3" fill="none"/>
+        <path d="${fillPathData}" fill="url(#chartGradient)"/>
+        
+        <!-- Data points -->
+        ${circles}
+    `;
 }
 
 // Simulate real-time updates for demo

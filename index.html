@@ -11,13 +11,7 @@
     <!-- Screen 1: Sensor List -->
     <div id="sensor-list" class="screen active">
         <nav class="top-nav">
-            <button class="nav-btn" onclick="showScreen('sensor-list')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                Usuario
-            </button>
+            <button class="nav-btn nav-btn-empty"></button>
             <button class="nav-btn nav-btn-empty"></button>
             <button class="nav-btn active" onclick="showScreen('sensor-list')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -28,76 +22,11 @@
             </button>
         </nav>
 
-        <div class="avatar">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        </div>
-
         <h1 class="page-title">Sensores - Casa</h1>
-        <p class="page-subtitle">Monitoreo en tiempo real</p>
+        <p class="page-subtitle"></p>
 
-        <div class="sensor-container">
-            <div class="sensor-card" onclick="showScreen('status-detail', 1)">
-                <div class="sensor-icon safe">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                    </svg>
-                </div>
-                <div class="sensor-info">
-                    <h3 class="sensor-name">Sensor 1</h3>
-                    <p class="sensor-location">Cocina</p>
-                </div>
-                <div class="sensor-status safe">
-                    <span class="status-dot"></span>
-                    <span class="status-label">Sin riesgo</span>
-                </div>
-                <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </div>
-
-            <div class="sensor-card" onclick="showScreen('status-detail', 2)">
-                <div class="sensor-icon safe">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                    </svg>
-                </div>
-                <div class="sensor-info">
-                    <h3 class="sensor-name">Sensor 2</h3>
-                    <p class="sensor-location">Sala</p>
-                </div>
-                <div class="sensor-status safe">
-                    <span class="status-dot"></span>
-                    <span class="status-label">Sin riesgo</span>
-                </div>
-                <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </div>
-
-            <div class="sensor-card" onclick="showScreen('status-detail', 3)">
-                <div class="sensor-icon safe">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                    </svg>
-                </div>
-                <div class="sensor-info">
-                    <h3 class="sensor-name">Sensor 3</h3>
-                    <p class="sensor-location">Garaje</p>
-                </div>
-                <div class="sensor-status safe">
-                    <span class="status-dot"></span>
-                    <span class="status-label">Sin riesgo</span>
-                </div>
-                <svg class="sensor-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </div>
+        <div class="sensor-container" id="sensor-container">
+            <!-- Sensor cards will be dynamically generated here -->
         </div>
 
         <button class="btn-test-alert" onclick="showScreen('alert-screen')">
@@ -113,13 +42,7 @@
     <!-- Screen 2: Status Detail -->
     <div id="status-detail" class="screen">
         <nav class="top-nav">
-            <button class="nav-btn" onclick="showScreen('sensor-list')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                Usuario
-            </button>
+            <button class="nav-btn nav-btn-empty"></button>
             <button class="nav-btn nav-btn-empty"></button>
             <button class="nav-btn active" onclick="showScreen('sensor-list')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -137,15 +60,9 @@
             Volver
         </button>
 
-        <div class="avatar">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        </div>
-
         <h1 class="page-title">Estado del Sensor</h1>
-        <p class="page-subtitle">Casa - Cocina</p>
+        <p class="page-subtitle-name" id="status-sensor-name-title"></p>
+        <p class="page-subtitle" id="status-sensor-name"></p>
 
         <div class="status-content">
             <div class="status-card">
@@ -197,13 +114,7 @@
     <!-- Screen 3: Sensor History -->
     <div id="sensor-history" class="screen">
         <nav class="top-nav">
-            <button class="nav-btn" onclick="showScreen('sensor-list')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                Usuario
-            </button>
+            <button class="nav-btn nav-btn-empty"></button>
             <button class="nav-btn nav-btn-empty"></button>
             <button class="nav-btn active" onclick="showScreen('sensor-list')">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -221,15 +132,9 @@
             Volver
         </button>
 
-        <div class="avatar">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        </div>
-
-        <h1 class="page-title">Historial - Sensor <span id="sensor-num">1</span></h1>
-        <p class="page-subtitle">Últimas lecturas registradas</p>
+        <h1 class="page-title">Historial</h1>
+        <p class="page-subtitle-name" id="history-sensor-name-title"></p>
+        <p class="page-subtitle" id="history-sensor-name"></p>
 
         <div class="history-chart">
             <svg class="chart-svg" viewBox="0 0 800 350">
@@ -375,6 +280,8 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
+    <script src="websocket.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
