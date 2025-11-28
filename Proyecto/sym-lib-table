@@ -1,0 +1,13 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "MQ_Sensors")(type "KiCad")(uri "${KIPRJMOD}/MQ_Sensors.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_CircuitosIntegrados")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_CircuitosIntegrados.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Conectores")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Conectores.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Displays")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Displays.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Microcontroladores")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Microcontroladores.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Modulos")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Modulos.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Reguladores")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Reguladores.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Switches")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Switches.kicad_sym")(options "")(descr ""))
+  (lib (name "MCE_Transistores")(type "KiCad")(uri "C:/Users/josem/Downloads/KiCad_Libraries-master/KiCad_Libraries-master/Libraries/MCE_Transistores.kicad_sym")(options "")(descr ""))
+  (lib (name "esp32_30pin")(type "KiCad")(uri "C:/Users/josem/Downloads/esp32_30pin.kicad_sym")(options "")(descr ""))
+)
