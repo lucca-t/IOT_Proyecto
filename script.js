@@ -1,4 +1,10 @@
 // Screen management
+let currentSensorIndex = 0; // Track which sensor is being viewed
+
+function showHistoryForCurrentSensor() {
+    showScreen('sensor-history', currentSensorIndex + 1);
+}
+
 function showScreen(screenId, sensorNum = null) {
     // Hide all screens
     const screens = document.querySelectorAll('.screen');
@@ -14,7 +20,10 @@ function showScreen(screenId, sensorNum = null) {
     if (sensorNum) {
         const ws = window.sensorWebSocket?.getInstance();
         const sensorIndex = parseInt(sensorNum) - 1;
+        currentSensorIndex = sensorIndex; // Store for later use
         const sensorInfo = ws?.getSensorInfo(sensorIndex);
+        
+        console.log(`🔍 Switching to sensor ${sensorNum}, index ${sensorIndex}:`, sensorInfo);
         
         // Update status detail screen
         const statusSensorNameTitle = document.getElementById('status-sensor-name-title');
@@ -38,7 +47,7 @@ function showScreen(screenId, sensorNum = null) {
         
         // Load history data for this sensor
         if (screenId === 'sensor-history') {
-            updateHistoryChart();
+            setTimeout(() => updateHistoryChart(), 100);
         }
     }
 }
@@ -314,20 +323,31 @@ function goHome() {
 
 // Update history chart with real data
 function updateHistoryChart() {
-    const sensorNum = document.getElementById('sensor-num')?.textContent || '1';
+    console.log('📊 updateHistoryChart called for sensor index:', currentSensorIndex);
     
-    // Get the sensor index (0-based) from sensor number (1-based)
-    const sensorIndex = parseInt(sensorNum) - 1;
-    
-    if (!window.sensorWebSocket) return;
+    if (!window.sensorWebSocket) {
+        console.warn('❌ WebSocket not available');
+        return;
+    }
     
     const ws = window.sensorWebSocket.getInstance();
-    if (!ws) return;
+    if (!ws) {
+        console.warn('❌ WebSocket instance not available');
+        return;
+    }
     
-    const history = ws.getHistory(sensorIndex);
+    const sensorInfo = ws.getSensorInfo(currentSensorIndex);
+    console.log('📌 Current sensor info:', sensorInfo);
+    
+    const history = ws.getHistory(currentSensorIndex);
+    console.log(`📈 History data (${history?.length || 0} points):`, history?.slice(0, 3));
     
     if (history && history.length > 0) {
-        console.log(`📈 Updating chart for Sensor ${sensorNum} with ${history.length} data points`);
+        console.log('🔍 Sample readings:', {
+            first: history[0],
+            middle: history[Math.floor(history.length / 2)],
+            last: history[history.length - 1]
+        });
         
         // Update the SVG chart with actual data
         updateChartSVG(history);
@@ -336,6 +356,13 @@ function updateHistoryChart() {
         const readingCards = document.querySelectorAll('.reading-card');
         const latestReadings = history.slice(-3).reverse();
         
+        console.log('📋 Latest 3 readings for cards:', latestReadings.map(r => ({
+            value: r.value,
+            rounded: Math.round(r.value),
+            timestamp: r.timestamp,
+            date: new Date(r.timestamp * 1000).toLocaleString()
+        })));
+        
         latestReadings.forEach((reading, index) => {
             if (readingCards[index]) {
                 const valueElement = readingCards[index].querySelector('.reading-value');
@@ -343,7 +370,9 @@ function updateHistoryChart() {
                 const statusElement = readingCards[index].querySelector('.reading-status');
                 
                 if (valueElement) {
-                    valueElement.textContent = `${Math.round(reading.value)} ppm`;
+                    const roundedValue = Math.round(reading.value);
+                    console.log(`💳 Card ${index}: setting value to ${roundedValue} ppm from reading:`, reading);
+                    valueElement.textContent = `${roundedValue} ppm`;
                 }
                 
                 if (timeElement) {
@@ -384,12 +413,21 @@ function updateChartSVG(history) {
     const startY = 50;
     const maxY = startY + height;
     
-    // Get max PPM value for scaling (with minimum of 50 for scale)
-    const maxPPM = Math.max(50, ...history.map(r => r.value), 50);
-    const minPPM = 0;
-    
     // Take last 10 readings for the chart
     const dataPoints = history.slice(-10);
+    
+    console.log('📊 Data points for chart:', dataPoints.map(d => ({
+        value: d.value,
+        timestamp: d.timestamp,
+        date: new Date(d.timestamp * 1000).toLocaleString()
+    })));
+    
+    // Get max PPM value for scaling from the data points we're showing
+    const values = dataPoints.map(r => r.value);
+    const maxPPM = Math.max(...values, 50);
+    const minPPM = 0;
+    
+    console.log('📏 Chart scale:', { minPPM, maxPPM, values });
     const numPoints = dataPoints.length;
     
     if (numPoints === 0) return;

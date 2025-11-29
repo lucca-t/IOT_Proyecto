@@ -69,16 +69,18 @@ class SensorWebSocket {
         // {
         //   "id": "019ac63e-f51c-763d-90c6-2e4a8680388d",
         //   "sensor_id": "019ac63e-f51c-763d-90c6-2e4a8680388d",
-        //   "name": "Kitchen Sensor",
-        //   "location": "Main Kitchen",
+        //   "label": "Tec de Monterrey",
         //   "value": 45.5,
-        //   "timestamp": 1764261279
+        //   "created_at": 1764261279
         // }
 
-        if (!data.id || data.value === undefined || !data.timestamp) {
+        if (!data.id || data.value === undefined || (!data.timestamp && !data.created_at)) {
             console.warn('Invalid data format:', data);
             return;
         }
+        
+        // Normalize timestamp field
+        const timestamp = data.created_at || data.timestamp;
 
         // Use sensor_id as the device identifier
         const uuid = data.sensor_id || data.id;
@@ -88,11 +90,11 @@ class SensorWebSocket {
             const sensorIndex = this.nextSensorIndex++;
             this.sensorRegistry.set(uuid, {
                 uuid: uuid,
-                name: data.name || `Sensor ${sensorIndex + 1}`,
+                name: data.label || data.name || `Sensor ${sensorIndex + 1}`,
                 location: data.location || 'Unknown',
                 index: sensorIndex
             });
-            console.log(`🆕 New sensor registered: ${data.name || uuid}`);
+            console.log(`🆕 New sensor registered: ${data.label || data.name || uuid}`);
             
             // Regenerate sensor cards to include new sensor
             if (typeof generateSensorCards === 'function') {
@@ -101,8 +103,9 @@ class SensorWebSocket {
         } else {
             // Update sensor info if name/location changed
             const sensor = this.sensorRegistry.get(uuid);
-            if (data.name && sensor.name !== data.name) {
-                sensor.name = data.name;
+            const newName = data.label || data.name;
+            if (newName && sensor.name !== newName) {
+                sensor.name = newName;
                 if (typeof updateSensorCardInfo === 'function') {
                     updateSensorCardInfo(sensor.index);
                 }
@@ -121,10 +124,10 @@ class SensorWebSocket {
         // Store the latest data with UUID as key
         this.sensorData.set(uuid, {
             value: data.value,
-            timestamp: data.timestamp,
+            timestamp: timestamp,
             id: data.id,
             uuid: uuid,
-            name: data.name || sensorInfo.name,
+            name: data.label || data.name || sensorInfo.name,
             location: data.location || sensorInfo.location,
             index: sensorIndex,
             receivedAt: Date.now()
@@ -137,7 +140,7 @@ class SensorWebSocket {
         const history = this.historyData.get(uuid);
         history.push({
             value: data.value,
-            timestamp: data.timestamp
+            timestamp: timestamp
         });
         
         // Keep only last 20 readings
@@ -351,11 +354,11 @@ class SensorWebSocket {
                         const sensorIndex = this.nextSensorIndex++;
                         this.sensorRegistry.set(sensor.id, {
                             uuid: sensor.id,
-                            name: sensor.name || `Sensor ${sensorIndex + 1}`,
+                            name: sensor.label || sensor.name || `Sensor ${sensorIndex + 1}`,
                             location: sensor.location || 'Unknown',
                             index: sensorIndex
                         });
-                        console.log(`✓ Registered: ${sensor.name || sensor.id}`);
+                        console.log(`✓ Registered: ${sensor.label || sensor.name || sensor.id}`);
                     }
                 });
                 
@@ -401,7 +404,7 @@ class SensorWebSocket {
                 // Store in history using UUID
                 this.historyData.set(uuid, data.map(reading => ({
                     value: reading.value,
-                    timestamp: reading.timestamp,
+                    timestamp: reading.created_at || reading.timestamp,
                     id: reading.id
                 })));
                 
